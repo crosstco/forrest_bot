@@ -1,0 +1,19 @@
+{
+    "name": "forrest_bot",
+    "version": "0.0.1",
+    "description": "An all purpose, personal bot to manage my personal Discord server",
+    "main": "index.js",
+    "scripts": {
+        "dev": "nodemon index.js"
+    },
+    "keywords": [],
+    "author": "Colin Cross",
+    "license": "ISC",
+    "dependencies": {
+        "discord.js": "^12.5.1",
+        "dotenv": "^8.2.0"
+    },
+    "devDependencies": {
+        "nodemon": "^2.0.7"
+    }
+}
