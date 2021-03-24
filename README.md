@@ -1,4 +1,4 @@
-## <center>Forrest Bot</center>
+## Forrest Bot
 
 **Most Discord servers are messy, disorganized, and unrewarding to be a part of.**<br>Seriously, why do my personal friends and myself use 6 different barebones servers? How can I expect to build a community of my own if the server itself lacks any sort of oomph?
 <br><br>
@@ -9,4 +9,4 @@ Despite the casual context of this project, I will be treating this a true softw
 They will all be put in a shared folder on Google Drive for those interested.
 <br><br>
 
-<center>[You can view the folder here](https://drive.google.com/drive/folders/1YZT3IrHFBBI1VVpJ9BmF_RWINirTVDmz?usp=sharing)</center>
+[You can view the folder here](https://drive.google.com/drive/folders/1YZT3IrHFBBI1VVpJ9BmF_RWINirTVDmz?usp=sharing)
