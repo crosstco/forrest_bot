@@ -32,7 +32,15 @@ const commandHandler = (message) => {
     const commandName = args.shift().toLowerCase();
 
     // Extract command from command file
-    const command = commands.get(commandName); // TODO Alias handling
+    const command =
+        // Get command from its name
+        commands.get(commandName) ||
+        // Get command from an alias
+        commands.find(
+            (commandObject) =>
+                commandObject.aliases &&
+                commandObject.aliases.includes(commandName)
+        );
 
     if (!command) return;
 

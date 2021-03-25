@@ -1,7 +1,14 @@
 module.exports = {
     name: 'pet',
-    description: 'Pet Forrest',
+    aliases: ['treat', 'good-boy', 'goodboy'],
+    description: 'Reward Forrest and get a random response',
+    args: false,
     execute(message, args) {
-        message.channel.send('*Heavy panting* (Thank you!)');
+        const responses = ['*Wags tail*', 'Bark bark!', '*Heavy panting*'];
+        const responseNum = Math.floor(
+            Math.random() * Math.floor(responses.length)
+        );
+
+        message.channel.send(responses[responseNum]);
     },
 };
