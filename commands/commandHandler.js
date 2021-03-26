@@ -1,7 +1,6 @@
 const Discord = require('discord.js');
+const config = require('config');
 const fs = require('fs');
-
-const { prefix } = require('../config/config.json');
 
 // LOAD COMMAND FILES
 
@@ -28,7 +27,10 @@ for (const folder of commandFolders) {
 
 const commandHandler = (message) => {
     // Extract command name and argument from the message.
-    const args = message.content.slice(prefix.length).trim().split(/ +/);
+    const args = message.content
+        .slice(config.get('botConfig.prefix').length)
+        .trim()
+        .split(/ +/);
     const commandName = args.shift().toLowerCase();
 
     // Extract command from command file

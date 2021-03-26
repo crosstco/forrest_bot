@@ -1,0 +1,8 @@
+{
+    "botConfig": {
+        "prefix": "!"
+    },
+    "dbConfig": {
+        "mongoURI": "mongodb+srv://testuser:justtesting@cluster0.xj04s.mongodb.net/Users?retryWrites=true&w=majority"
+    }
+}

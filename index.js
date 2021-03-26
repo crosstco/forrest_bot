@@ -1,10 +1,12 @@
 const Discord = require('discord.js');
+const config = require('config');
 const dotenv = require('dotenv');
 dotenv.config();
 
+const connectDB = require('./config/db');
 const commandHandler = require('./commands/commandHandler');
-const { prefix } = require('./config/config.json');
 
+connectDB();
 const client = new Discord.Client();
 
 // Event listener for bot ready
@@ -17,7 +19,9 @@ client.on('message', (message) => {
     if (message.author.bot) return;
 
     // Message contains a command, dispatch to handler
-    if (message.content.startsWith(prefix)) return commandHandler(message);
+    if (message.content.startsWith(config.get('botConfig.prefix'))) {
+        return commandHandler(message);
+    }
 });
 
 client.login(process.env.BOT_TOKEN);
