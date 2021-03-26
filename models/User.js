@@ -1,7 +1,9 @@
 const mongoose = require('mongoose');
 
 const UserSchema = mongoose.Schema({
-    accountName: String,
+    discordID: String,
+    displayName: String,
+    nickname: String,
     motto: String,
     dateJoined: {
         type: Date,

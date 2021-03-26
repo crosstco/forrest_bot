@@ -1,8 +1,9 @@
 {
     "botConfig": {
-        "prefix": "!"
+        "prefix": "!",
+        "welcomeChannel": "welcome_and_rules"
     },
     "dbConfig": {
-        "mongoURI": "mongodb+srv://testuser:justtesting@cluster0.xj04s.mongodb.net/Users?retryWrites=true&w=majority"
+        "mongoURI": "mongodb+srv://testuser:justtesting@cluster0.xj04s.mongodb.net/Members?retryWrites=true&w=majority"
     }
 }
