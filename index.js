@@ -62,4 +62,41 @@ client.on('message', (message) => {
     }
 });
 
+// Event listener for voice channels
+client.on('voiceStateUpdate', async (oldState, newState) => {
+    const { member, guild, channel } = newState;
+
+    if (!channel) return;
+
+    // Lobbies
+    if (channel.name === config.get('botConfig.lobbyChannel')) {
+        const lobbyCategory = guild.channels.cache.find(
+            (channel) => channel.name === config.get('botConfig.lobbyCategory')
+        );
+
+        try {
+            console.log;
+            // Create a new voice channel and new text channel, move user into it
+            const lobbyVoice = await guild.channels.create(
+                `${member.displayName}'s Lobby`,
+                {
+                    type: 'voice',
+                    parent: lobbyCategory,
+                }
+            );
+
+            const lobbyText = await guild.channels.create(
+                `${member.displayName}-text`,
+                {
+                    parent: lobbyCategory,
+                }
+            );
+
+            member.voice.setChannel(lobbyVoice);
+        } catch (error) {
+            console.error('Error creating lobby');
+        }
+    }
+});
+
 client.login(process.env.BOT_TOKEN);

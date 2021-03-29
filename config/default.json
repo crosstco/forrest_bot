@@ -1,6 +1,8 @@
 {
     "botConfig": {
         "prefix": "!",
-        "welcomeChannel": "welcome_and_rules"
+        "welcomeChannel": "welcome_and_rules",
+        "lobbyCategory": "Active Lobbies",
+        "lobbyChannel": "Create a Lobby"
     }
 }
