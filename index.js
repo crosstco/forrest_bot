@@ -65,11 +65,8 @@ client.on('message', (message) => {
 // Event listener for voice channels
 client.on('voiceStateUpdate', async (oldState, newState) => {
     const { member, guild, channel } = newState;
-
-    if (!channel) return;
-
     // Lobbies
-    if (channel.name === config.get('botConfig.lobbyChannel')) {
+    if (channel && channel.name === config.get('botConfig.lobbyChannel')) {
         const lobbyCategory = guild.channels.cache.find(
             (channel) => channel.name === config.get('botConfig.lobbyCategory')
         );
@@ -77,24 +74,45 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
         try {
             console.log;
             // Create a new voice channel and new text channel, move user into it
-            const lobbyVoice = await guild.channels.create(
-                `${member.displayName}'s Lobby`,
-                {
-                    type: 'voice',
-                    parent: lobbyCategory,
-                }
-            );
+            const lobbyName = `${member.displayName}'s Lobby`;
 
-            const lobbyText = await guild.channels.create(
-                `${member.displayName}-text`,
-                {
-                    parent: lobbyCategory,
-                }
-            );
+            const lobbyVoice = await guild.channels.create(lobbyName, {
+                type: 'voice',
+                parent: lobbyCategory,
+            });
+
+            const lobbyText = await guild.channels.create(`${lobbyName}-text`, {
+                parent: lobbyCategory,
+            });
 
             member.voice.setChannel(lobbyVoice);
         } catch (error) {
-            console.error('Error creating lobby');
+            console.error(error);
+        }
+    }
+
+    if (
+        oldState.channel &&
+        oldState.channel.parent.name ===
+            config.get('botConfig.lobbyCategory') &&
+        oldState.channel.members.size === 0
+    ) {
+        // Find the matching text channel using regular expressions
+        let textChannelName = oldState.channel.name;
+        textChannelName = textChannelName.replace(/[^a-zA-Z0-9\-_ ]/g, '');
+        textChannelName = textChannelName.replace(/ +/g, '-');
+        textChannelName = textChannelName.toLowerCase();
+        textChannelName += '-text';
+
+        const textChannel = guild.channels.cache.find(
+            (channel) => channel.name === textChannelName
+        );
+
+        try {
+            await oldState.channel.delete();
+            await textChannel.delete();
+        } catch (error) {
+            console.error(error);
         }
     }
 });
