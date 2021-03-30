@@ -80,9 +80,11 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
         oldState.channel &&
         oldState.channel.parent.name ===
             config.get('botConfig.lobbyCategory') &&
-        oldState.channel.members.size === 0
+        oldState.channel.members.size === 0 &&
+        (!newState.channel ||
+            newState.channel.name !== config.get('botConfig.lobbyChannel'))
     ) {
-        lobbyHandler.deleteLobby(member);
+        lobbyHandler.deleteLobbyChannels(oldState.channel);
     }
 });
 

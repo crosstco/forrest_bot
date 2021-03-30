@@ -41,16 +41,35 @@ const lobbyHandler = {
 
             lobby.channels.voice = lobbyVoice.id;
             lobby.channels.text = lobbyText.id;
-            //lobby.isActive = true;
-
+            lobby.isActive = true;
             await lobby.save();
 
-            // member.voice.setChannel(lobby.channels.voice);
+            member.voice.setChannel(lobby.channels.voice);
         } catch (error) {
             console.error(error);
         }
     },
-    async deleteLobby(member) {},
+    async deleteLobbyChannels(voiceChannel) {
+        const { id, guild } = voiceChannel;
+
+        try {
+            // Find the lobby that is using this voice channel's id
+            let lobby = await Lobby.findOne({ 'channels.voice': id });
+
+            if (!lobby) return;
+
+            // Delete the channels of this lobby
+            await guild.channels.resolve(lobby.channels.voice).delete();
+            await guild.channels.resolve(lobby.channels.text).delete();
+
+            // Set the lobby settings accordingly
+            lobby.channels = undefined;
+            lobby.isActive = false;
+            await lobby.save();
+        } catch (error) {
+            console.error(error);
+        }
+    },
 };
 
 module.exports = lobbyHandler;
