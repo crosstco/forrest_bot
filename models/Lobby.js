@@ -1,18 +1,26 @@
 const mongoose = require('mongoose');
 
 const LobbySchema = mongoose.Schema({
-    user: {
-        type: mongoose.Schema.Types.ObjectId,
+    owner: {
+        type: String,
         ref: 'users',
     },
     name: String,
-    private: {
-        isPrivate: Boolean,
-        whitelist: [String],
+    channels: {
+        voice: String,
+        text: String,
     },
-    capacity: Number,
-    game: String,
-    active: Boolean,
+    type: {
+        type: String,
+        default: 'private',
+    },
+    whitelist: [],
+    capacity: {
+        type: Number,
+        default: 0,
+    },
+    topic: String,
+    isActive: Boolean,
 });
 
 module.exports = mongoose.model('lobby', LobbySchema);
