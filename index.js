@@ -72,7 +72,12 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
         newState.channel &&
         newState.channel.name === config.get('botConfig.lobbyChannel')
     ) {
-        lobbyHandler.createLobbyForMember(member);
+        const newVoiceChannelID = await lobbyHandler.createLobbyForMember(
+            member
+        );
+
+        // If the user just got moved into the channel they were just in, stop executing so we don't delete it. ** Slows down? **
+        if (newVoiceChannelID === oldState.channelID) return;
     }
 
     // User left a lobby and the lobby is now empty
@@ -80,9 +85,7 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
         oldState.channel &&
         oldState.channel.parent.name ===
             config.get('botConfig.lobbyCategory') &&
-        oldState.channel.members.size === 0 &&
-        (!newState.channel ||
-            newState.channel.name !== config.get('botConfig.lobbyChannel'))
+        oldState.channel.members.size === 0
     ) {
         lobbyHandler.deleteLobbyChannels(oldState.channel);
     }

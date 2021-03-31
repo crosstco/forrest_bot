@@ -22,7 +22,8 @@ const lobbyHandler = {
                 });
             } else if (lobby.isActive) {
                 // Simply move the user back into their lobby
-                return member.voice.setChannel(lobby.channels.voice);
+                member.voice.setChannel(lobby.channels.voice);
+                return lobby.channels.voice;
             }
 
             // Create new voice channel
@@ -45,6 +46,8 @@ const lobbyHandler = {
             await lobby.save();
 
             member.voice.setChannel(lobby.channels.voice);
+
+            return lobby.channels.voice;
         } catch (error) {
             console.error(error);
         }
