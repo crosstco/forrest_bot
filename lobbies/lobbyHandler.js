@@ -73,6 +73,25 @@ const lobbyHandler = {
             console.error(error);
         }
     },
+    async getLobby(member) {
+        try {
+            let lobby = await Lobby.findOne({ owner: member.id });
+            return lobby;
+        } catch (error) {
+            console.error(error);
+        }
+    },
+    async updateLobby(member, options) {
+        try {
+            let lobby = await Lobby.findOneAndUpdate(
+                { owner: member.id },
+                { $set: options },
+                { new: true }
+            );
+        } catch (error) {
+            console.error(error);
+        }
+    },
 };
 
 module.exports = lobbyHandler;
