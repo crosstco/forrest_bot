@@ -74,6 +74,10 @@ const lobbyHandler = {
 
             member.voice.setChannel(lobby.channels.voice);
 
+            await lobbyText.send(
+                `Welcome to your lobby, ${member}! Try the \`!config\` command to change its name, topic, or visibility to the rest of the server!`
+            );
+
             return lobby.channels.voice;
         } catch (error) {
             console.error(error);
