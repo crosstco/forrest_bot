@@ -1,4 +1,5 @@
 const config = require('config');
+const { Message } = require('discord.js');
 
 const Lobby = require('../models/Lobby');
 
@@ -30,18 +31,44 @@ const lobbyHandler = {
             const lobbyVoice = await guild.channels.create(lobby.name, {
                 type: 'voice',
                 parent: lobbyCategory,
+                permissionOverwrites:
+                    lobby.type === 'private'
+                        ? [
+                              {
+                                  id: guild.roles.everyone.id,
+                                  deny: ['VIEW_CHANNEL'],
+                              },
+                              {
+                                  id: id,
+                                  allow: ['VIEW_CHANNEL'],
+                              },
+                          ]
+                        : [],
             });
+            lobby.channels.voice = lobbyVoice.id;
 
             // Create matching text channel
             const lobbyText = await guild.channels.create(
                 `${lobby.name}-text`,
                 {
                     parent: lobbyCategory,
+                    permissionOverwrites:
+                        lobby.type === 'private'
+                            ? [
+                                  {
+                                      id: guild.roles.everyone.id,
+                                      deny: ['VIEW_CHANNEL'],
+                                  },
+                                  {
+                                      id: id,
+                                      allow: ['VIEW_CHANNEL'],
+                                  },
+                              ]
+                            : [],
                 }
             );
-
-            lobby.channels.voice = lobbyVoice.id;
             lobby.channels.text = lobbyText.id;
+
             lobby.isActive = true;
             await lobby.save();
 
@@ -82,12 +109,79 @@ const lobbyHandler = {
         }
     },
     async updateLobby(member, options) {
+        const { guild } = member;
+
         try {
             let lobby = await Lobby.findOneAndUpdate(
                 { owner: member.id },
                 { $set: options },
                 { new: true }
             );
+
+            if (!lobby) return;
+
+            // Resolve the lobby's channels
+            const voiceChannel = guild.channels.resolve(lobby.channels.voice);
+            const textChannel = guild.channels.resolve(lobby.channels.text);
+
+            // Pull out the updated options
+            const { name, topic, type } = options;
+
+            // Update the names
+            if (name) {
+                await voiceChannel.setName(name);
+                await textChannel.setName(name);
+            }
+
+            // Update the topic
+            if (topic) {
+                await voiceChannel.setTopic(topic);
+                await textChannel.setTopic(topic);
+            }
+
+            // Update the visibility
+            if (type) {
+                // Public: Make the channels visible to everyone
+                if (type === 'public') {
+                    await voiceChannel.overwritePermissions([
+                        {
+                            id: guild.roles.everyone.id,
+                            allow: ['VIEW_CHANNEL'],
+                        },
+                    ]);
+                    await textChannel.overwritePermissions([
+                        {
+                            id: guild.roles.everyone.id,
+                            allow: ['VIEW_CHANNEL'],
+                        },
+                    ]);
+                }
+
+                // Private: Make the channels only visible to the member and mods.
+                if (type === 'private') {
+                    await voiceChannel.overwritePermissions([
+                        {
+                            id: guild.roles.everyone.id,
+                            deny: ['VIEW_CHANNEL'],
+                        },
+                        {
+                            id: id,
+                            allow: ['VIEW_CHANNEL'],
+                        },
+                    ]);
+
+                    await textChannel.overwritePermissions([
+                        {
+                            id: guild.roles.everyone.id,
+                            deny: ['VIEW_CHANNEL'],
+                        },
+                        {
+                            id: id,
+                            allow: ['VIEW_CHANNEL'],
+                        },
+                    ]);
+                }
+            }
         } catch (error) {
             console.error(error);
         }

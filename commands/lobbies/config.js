@@ -61,6 +61,9 @@ module.exports = {
 
         // Begin config walkthrough
 
+        // Create new object
+        const configFields = {};
+
         // Only listen for replies from the owner who made the config call
         const filter = (m) => m.author === message.author;
 
@@ -71,12 +74,9 @@ module.exports = {
         // Await a yes or no response
         let response = await getYesOrNoResponse(message);
         // If yes, await a word, otherwise use current name
-        let name;
         if (response === 'y') {
             channel.send('Please enter a name for your lobby.');
-            name = await getSingleResponse(message);
-        } else {
-            name = lobby.name;
+            configFields.name = await getSingleResponse(message);
         }
 
         // Ask for topic set/change
@@ -91,12 +91,9 @@ module.exports = {
         // Await a yes or no response
         response = await getYesOrNoResponse(message);
         // If yes,
-        let topic;
         if (response === 'y') {
             channel.send('Please enter a topic for your lobby.');
-            topic = await getSingleResponse(message);
-        } else {
-            topic = lobby.topic;
+            configFields.topic = await getSingleResponse(message);
         }
 
         // Visibility
@@ -110,20 +107,28 @@ module.exports = {
 
         response = await getYesOrNoResponse(message);
         // If yes
-        let type;
         if (response === 'y') {
-            type = lobby.type === 'public' ? 'private' : 'public';
-            channel.send(`The visibility will be changed to ${type}`);
+            configFields.type = lobby.type === 'public' ? 'private' : 'public';
+            channel.send(
+                `The visibility will be changed to ${configFields.type}`
+            );
         } else {
-            type = lobby.type;
             channel.send(`The visibility will remain ${lobby.type}`);
         }
 
         let configChanges = 'Your config changes:';
-        configChanges += `\nName: ${lobby.name} => ${name}`;
-        configChanges += `\nTopic: ${lobby.topic} => ${topic}`;
-        configChanges += `\nVisibility: ${lobby.type} => ${type}`;
+        configChanges += `\nName: ${lobby.name} => ${
+            configFields.name ? configFields.name : lobby.name
+        }`;
+        configChanges += `\nTopic: ${lobby.topic} => ${
+            configFields.topic ? configFields.topic : lobby.topic
+        }`;
+        configChanges += `\nVisibility: ${lobby.type} => ${
+            configFields.type ? configFields.type : lobby.type
+        }`;
 
         message.reply(configChanges);
+
+        lobbyHandler.updateLobby(member, configFields);
     },
 };
